@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Admin Customer Dashboard | ShopSmart</title>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- Lottie -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background: #f4f7fb;
+            color: #333;
+        }
+
+        .logo {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            height: 120px;
+            z-index: 1000;
+          }
+
+        .header {
+            background: linear-gradient(to right, #e1f5fe, #fce4ec); /* Admin portal background */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 60px 80px 40px;
+            clip-path: ellipse(100% 100% at 50% 0%);
+        }
+
+        .header-text h1 {
+            font-size: 42px;
+            color: #0d47a1; /* Admin portal color */
+            margin-bottom: 10px;
+        }
+
+        .header-text p {
+            font-size: 17px;
+            color: #555;
+        }
+
+        .lottie-wrapper {
+            width: 320px;
+            height: 240px;
+        }
+
+        .content-container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        .content-container h2 {
+            font-size: 28px;
+            color: #0d47a1; /* Admin portal color */
+            margin-bottom: 24px;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: white;
+            color: #007bff;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 1000; /* Ensure it stays above other elements */
+        }
+
+        .logout-btn:hover {
+            background: #007bff;
+            color: white;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            right: 150px; /* Adjusted position */
+            background: white;
+            color: #007bff;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 1000; /* Ensure it stays above other elements */
+        }
+
+        .back-btn:hover {
+            background: #007bff;
+            color: white;
+        }
+
+        /* Search and Filter Form */
+        .filter-form {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            background: #f9f9fb;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            align-items: center;
+        }
+
+        .filter-form input[type="text"],
+        .filter-form select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            flex-grow: 1;
+            max-width: 250px;
+        }
+
+        .filter-form button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .filter-form button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        /* Create User Button */
+        .create-user-btn {
+            background-color: #28a745; /* Green for create */
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-bottom: 25px;
+        }
+
+        .create-user-btn:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        table, th, td {
+            border: 1px solid #eee;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+            font-weight: 500;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 8px; /* Smaller gap for action buttons */
+            flex-wrap: wrap;
+        }
+
+        .button-container button, .button-container form button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            white-space: nowrap; /* Prevent text wrapping */
+            margin: 0; /* Reset margin from general button style */
+        }
+
+        .button-container button:hover, .button-container form button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .button-container .edit-btn { background-color: #ffc107; color: #212529; }
+        .button-container .edit-btn:hover { background-color: #e0a800; }
+        .button-container .delete-btn { background-color: #dc3545; }
+        .button-container .delete-btn:hover { background-color: #c82333; }
+        .button-container .impersonate-btn { background-color: #6f42c1; } /* Purple for impersonate */
+        .button-container .impersonate-btn:hover { background-color: #5a2d9e; }
+        .button-container .reset-password-btn { background-color: #17a2b8; } /* Cyan for reset password */
+        .button-container .reset-password-btn:hover { background-color: #138496; }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 999;
+            backdrop-filter: blur(3px); /* Frosted glass effect */
+            transition: opacity 0.3s ease;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            width: 90%;
+            max-width: 500px;
+            animation: fadeInScale 0.3s ease-out forwards;
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .modal-header {
+            font-size: 24px;
+            color: #0d47a1;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .modal label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .modal input[type="text"],
+        .modal input[type="email"],
+        .modal input[type="password"] {
+            width: calc(100% - 20px);
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        .modal input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        .modal-footer {
+            margin-top: 25px;
+            text-align: right;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .modal-footer button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .modal-footer button[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+
+        .modal-footer button[type="submit"]:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .modal-footer button[type="button"] { /* Cancel button */
+            background-color: #6c757d;
+            color: white;
+            border: none;
+        }
+
+        .modal-footer button[type="button"]:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .lottie-wrapper {
+                margin-top: 20px;
+            }
+            .back-btn, .logout-btn {
+                position: static;
+                margin-top: 10px;
+                display: block;
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .content-container {
+                padding: 20px;
+            }
+            .filter-form {
+                flex-direction: column;
+                gap: 10px;
+                align-items: stretch;
+            }
+            .filter-form input, .filter-form select, .filter-form button {
+                width: 100%;
+                max-width: 100%;
+            }
+            table, th, td {
+                font-size: 14px;
+                padding: 8px;
+            }
+            .button-container {
+                flex-direction: column;
+                gap: 5px;
+            }
+            .button-container button, .button-container form button {
+                width: 100%;
+                padding: 10px;
+            }
+            .modal {
+                padding: 20px;
+            }
+            .modal-header {
+                font-size: 20px;
+            }
+            .modal input {
+                width: 100%;
+            }
+            .modal-footer {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .modal-footer button {
+                width: 100%;
+            }
+        }
+    </style>
+    <script>
+        function openModal(button) {
+            const modal = document.getElementById('modal');
+            const overlay = document.getElementById('modal-overlay');
+            const customerId = button.getAttribute('data-id');
+            const username = button.getAttribute('data-username');
+            const firstname = button.getAttribute('data-firstname');
+            const lastname = button.getAttribute('data-lastname');
+            const email = button.getAttribute('data-email');
+            const active = button.getAttribute('data-active') === 'true'; // Convert string to boolean
+
+            document.getElementById('customerId').value = customerId;
+            document.getElementById('username').value = username;
+            document.getElementById('firstname').value = firstname;
+            document.getElementById('lastname').value = lastname;
+            document.getElementById('email').value = email;
+            document.getElementById('active').checked = active;
+            document.getElementById('active-hidden').disabled = active; // Disable hidden input if checkbox is checked
+
+            modal.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('modal-overlay').style.display = 'none';
+        }
+
+        function toggleHiddenInput(checkbox, hiddenInputId) {
+            const hiddenInput = document.getElementById(hiddenInputId);
+            hiddenInput.disabled = checkbox.checked;
+        }
+
+        function openOrderHistory(button) {
+            const modal = document.getElementById('order-modal');
+            const overlay = document.getElementById('order-modal-overlay');
+            const customerId = button.getAttribute('data-id');
+
+            fetch(`/admin/customer/${customerId}/orders`)
+                .then(response => response.json())
+                .then(data => {
+                    const orderContent = document.getElementById('order-content');
+                    orderContent.innerHTML = `
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Address</th>
+                                    <th>Order Date</th>
+                                    <th>Status</th>
+                                    <th>Total Amount</th>
+                                    <th>Product Names</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.map(order => `
+                                    <tr>
+                                        <td>${order.id}</td>
+                                        <td>${order.address}</td>
+                                        <td>${new Date(order.orderDate).toLocaleString()}</td>
+                                        <td>${order.status}</td>
+                                        <td>${order.totalAmount}</td>
+                                        <td>${order.productNames}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                    modal.style.display = 'block';
+                    overlay.style.display = 'block';
+                })
+                .catch(error => console.error('Error fetching order history:', error));
+        }
+
+        function closeOrderModal() {
+            document.getElementById('order-modal').style.display = 'none';
+            document.getElementById('order-modal-overlay').style.display = 'none';
+        }
+
+        function openCreateUserModal() {
+            document.getElementById('create-user-modal').style.display = 'block';
+            document.getElementById('create-user-modal-overlay').style.display = 'block';
+        }
+
+        function closeCreateUserModal() {
+            document.getElementById('create-user-modal').style.display = 'none';
+            document.getElementById('create-user-modal-overlay').style.display = 'none';
+        }
+
+        function resetPassword(button) {
+            const customerId = button.getAttribute('data-id');
+            fetch(`/admin/customer/${customerId}/reset-password`, {
+                method: 'POST'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(`Temporary password for customer ID ${data.customerId} is ${data.tempPassword}`);
+                })
+                .catch(error => console.error('Error resetting password:', error));
+        }
+    </script>
+</head>
+<body>
+
+<!-- Logo -->
+<img src="/logo/FullLogo_Transparent.png" alt="ShopSmart Logo" class="logo" />
+
+<!-- Navigation Buttons -->
+<button type="button" onclick="history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Go Back</button>
+<button onclick="location.href='/logout'" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+
+<!-- Hero Header -->
+<section class="header">
+    <div class="header-text">
+        <h1>Admin Customer Dashboard</h1>
+        <p>Manage customer accounts, view their details, and handle orders.</p>
+    </div>
+    <div class="lottie-wrapper">
+        <iframe
+                src="https://lottie.host/embed/83a0709a-44f1-4b8f-a02d-0fd6fd7e84d7/TH1PXtp21i.lottie"
+                style="width: 320px; height: 320px; border: none; background: transparent;"
+                allowfullscreen
+                loading="lazy">
+        </iframe>
+    </div>
+</section>
+
+<!-- Main Content Section -->
+<div class="content-container">
+    <h2>Customer Accounts</h2>
+
+    <form method="get" th:action="@{/admin/customer/dashboard}" class="filter-form">
+        <input type="text" name="search" placeholder="Search by name or email" th:value="${param.search}">
+        <select name="active" th:value="${param.active}">
+            <option value="">All Statuses</option>
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+        </select>
+        <button type="submit"><i class="fas fa-search"></i> Search & Filter</button>
+    </form>
+
+    <button type="button" onclick="openCreateUserModal()" class="create-user-btn"><i class="fas fa-user-plus"></i> Create New User</button>
+
+    <!-- Create User Modal -->
+    <div id="create-user-modal-overlay" class="modal-overlay" onclick="closeCreateUserModal()"></div>
+    <div id="create-user-modal" class="modal">
+        <div class="modal-header">Create New User</div>
+        <form th:action="@{/admin/customer/create}" method="post">
+            <label for="new-username">Username:</label>
+            <input type="text" id="new-username" name="userName" required><br>
+            <label for="new-firstname">First Name:</label>
+            <input type="text" id="new-firstname" name="firstname" required><br>
+            <label for="new-lastname">Last Name:</label>
+            <input type="text" id="new-lastname" name="lastname" required><br>
+            <label for="new-password">Password:</label>
+            <input type="password" id="new-password" name="password" required><br>
+            <label for="new-email">Email:</label>
+            <input type="email" id="new-email" name="email" required><br>
+            <label for="new-active">Active:</label>
+            <input type="checkbox" id="new-active" name="active" value="true" checked><br>
+            <div class="modal-footer">
+                <button type="submit"><i class="fas fa-plus-circle"></i> Create</button>
+                <button type="button" onclick="closeCreateUserModal()"><i class="fas fa-times-circle"></i> Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Username</th>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="customerTableBody">
+        <tr th:each="customer : ${customers}">
+            <td th:text="${customer.username}"></td>
+            <td th:text="${customer.firstname}"></td>
+            <td th:text="${customer.lastname}"></td>
+            <td th:text="${customer.email}"></td>
+            <td th:text="${customer.active ? 'Active' : 'Inactive'}"></td>
+            <td>
+                <div class="button-container">
+                    <button type="button" class="edit-btn"
+                            th:attr="data-id=${customer.id}, data-username=${customer.username},data-firstname=${customer.firstname}, data-lastname=${customer.lastname},data-email=${customer.email}, data-active=${customer.active ? 'true' : 'false'}"
+                            onclick="openModal(this)">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button type="button" class="view-orders-btn"
+                            th:attr="data-id=${customer.id}"
+                            onclick="openOrderHistory(this)">
+                        <i class="fas fa-eye"></i> View Orders
+                    </button>
+                    <form th:action="@{/admin/customer/{id}/impersonate(id=${customer.id})}" method="post">
+                        <input type="hidden" name="impersonatedCustomerId" th:value="${customer.id}">
+                        <button type="submit" class="impersonate-btn"><i class="fas fa-mask"></i> Impersonate</button>
+                    </form>
+                    <button type="button" class="reset-password-btn"
+                            th:attr="data-id=${customer.id}"
+                            onclick="resetPassword(this)">
+                        <i class="fas fa-key"></i> Reset Password
+                    </button>
+                    <form th:action="@{/admin/customer/{id}/delete(id=${customer.id})}" method="post">
+                        <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this customer?')"><i class="fas fa-trash-alt"></i> Delete</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Edit Customer Modal -->
+    <div id="modal-overlay" class="modal-overlay" onclick="closeModal()"></div>
+    <div id="modal" class="modal">
+        <div class="modal-header">Edit Customer Profile</div>
+        <form th:action="@{/admin/customer/update}" method="post">
+            <input type="hidden" id="customerId" name="customerId">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="userName"><br>
+            <label for="firstname">First Name:</label>
+            <input type="text" id="firstname" name="firstname"><br>
+            <label for="lastname">Lastname:</label>
+            <input type="text" id="lastname" name="lastname"><br>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email"><br>
+            <label for="active">Active:</label>
+            <input type="checkbox" id="active" name="active" value="true" onchange="toggleHiddenInput(this, 'active-hidden')"><br>
+            <input type="hidden" id="active-hidden" name="active" value="false">
+            <div class="modal-footer">
+                <button type="submit"><i class="fas fa-save"></i> Save</button>
+                <button type="button" onclick="closeModal()"><i class="fas fa-times-circle"></i> Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Order History Modal -->
+    <div id="order-modal-overlay" class="modal-overlay" onclick="closeOrderModal()"></div>
+    <div id="order-modal" class="modal">
+        <div class="modal-header">Order History</div>
+        <div id="order-content">
+            <!-- Order history will be loaded here dynamically -->
+        </div>
+        <div class="modal-footer">
+            <button type="button" onclick="closeOrderModal()"><i class="fas fa-times-circle"></i> Close</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

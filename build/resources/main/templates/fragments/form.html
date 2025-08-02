@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration & Login | ShopSmart</title>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- Lottie -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Use min-height to ensure content is centered even if short */
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #e8f5e9); /* Customer portal background */
+            color: #333;
+            padding: 20px; /* Add padding for small screens */
+            box-sizing: border-box; /* Include padding in element's total width and height */
+        }
+
+       .logo {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            height: 120px;
+            z-index: 1000;
+        }
+
+        .form-container {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            width: 100%;
+            max-width: 450px; /* Increased max-width for better spacing */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin: 15px;
+            box-sizing: border-box;
+        }
+
+        .form-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2em; /* Larger font size */
+            color: #00796b; /* Customer portal color */
+            font-weight: 700;
+        }
+
+        .form-container label {
+            align-self: flex-start;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+            font-size: 1.05em;
+        }
+
+        .form-container input,
+        .form-container select,
+        .form-container button {
+            width: 100%;
+            padding: 14px; /* Increased padding */
+            margin-bottom: 20px; /* Increased margin */
+            border: 1px solid #ddd;
+            border-radius: 8px; /* More rounded corners */
+            font-size: 1.05em;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-container input:focus,
+        .form-container select:focus {
+            border-color: #00796b; /* Customer portal color */
+            box-shadow: 0 0 10px rgba(0, 121, 107, 0.2); /* Matching shadow */
+            outline: none;
+        }
+
+        .form-container button {
+            background-color: #00796b; /* Customer portal color */
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            padding: 15px; /* Larger button padding */
+            font-size: 1.1em;
+        }
+
+        .form-container button:hover {
+            background-color: #004d40; /* Darker green on hover */
+            transform: translateY(-3px); /* More pronounced hover effect */
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+            border: 1px solid #f5c6cb;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+            border: 1px solid #c3e6cb;
+        }
+
+        .password-requirements {
+            align-self: flex-start;
+            margin-top: -10px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            list-style-type: disc;
+            padding-left: 25px;
+        }
+
+        .password-requirements li {
+            margin-bottom: 5px;
+        }
+
+        .password-requirements .valid {
+            color: #28a745; /* Green for valid */
+        }
+
+        .password-requirements .invalid {
+            color: #dc3545; /* Red for invalid */
+        }
+
+        /* Lottie animation for forms */
+        .form-lottie {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                position: static;
+                display: block;
+                margin: 0 auto 20px;
+                height: 90px;
+            }
+            body {
+                flex-direction: column;
+                justify-content: flex-start;
+                padding-top: 150px; /* Adjust for fixed logo */
+            }
+            .form-container {
+                margin: 10px 0;
+                padding: 30px;
+            }
+            .form-container h2 {
+                font-size: 1.8em;
+            }
+            .form-container input, .form-container button {
+                padding: 12px;
+                font-size: 1em;
+            }
+        }
+    </style>
+    <script>
+    function openForgotPasswordModal() {
+        document.getElementById('forgot-password-modal').style.display = 'block';
+        document.getElementById('forgot-password-modal-overlay').style.display = 'block';
+    }
+
+    function closeForgotPasswordModal() {
+        document.getElementById('forgot-password-modal').style.display = 'none';
+        document.getElementById('forgot-password-modal-overlay').style.display = 'none';
+    }
+</script>
+</head>
+<body>
+<!-- Logo -->
+<img src="/logo/FullLogo_Transparent.png" alt="ShopSmart Logo" class="logo" />
+
+<div th:fragment="registrationForm" class="form-container">
+    <h2>Register for ShopSmart</h2>
+    <iframe
+            src="https://lottie.host/embed/6710799e-8179-4b70-8d4c-967e2bec50b6/FbjToJAA3u.lottie"
+            style="width: 200px; height: 200px; border: none; background: transparent;"
+            allowfullscreen
+            loading="lazy">
+    </iframe>
+    <div th:if="${message != null}" th:text="${message}"
+         th:classappend="${messageType == 'error' ? 'error-message' : (messageType == 'success' ? 'success-message' : '')}"></div>
+
+    <form id="registrationForm" th:action="@{/register}" method="post">
+
+        <label for="firstname"><i class="fas fa-user"></i> First Name:</label>
+        <input type="text" id="firstname" name="firstname" required autocomplete="firstname">
+        <label for="lastname"><i class="fas fa-user"></i> Last Name:</label>
+        <input type="text" id="lastname" name="lastname" required autocomplete="lastname">
+        <label for="username"><i class="fas fa-user-tag"></i> Username:</label>
+        <input type="text" id="username" name="username" required autocomplete="username">
+
+        <label for="email"><i class="fas fa-envelope"></i> Email:</label>
+        <input type="email" id="email" name="email" required autocomplete="email">
+
+        <label for="password"><i class="fas fa-lock"></i> Password:</label>
+        <input type="password" id="password" name="password" required autocomplete="new-password">
+        <ul id="passwordRequirements" class="password-requirements">
+            <li id="length">At least 8 characters</li>
+            <li id="uppercase">At least one uppercase letter</li>
+            <li id="lowercase">At least one lowercase letter</li>
+            <li id="number">At least one number</li>
+            <li id="special">At least one special character (!@#$%^&*)</li>
+        </ul>
+
+        <button type="submit"><i class="fas fa-user-plus"></i> Register</button>
+    </form>
+</div>
+
+<div th:fragment="loginForm" class="form-container">
+    <h2>Login to ShopSmart</h2>
+    <iframe
+            src="https://lottie.host/embed/c92ba34d-3ab1-4f66-90cc-2a75ff4427e4/ii577FODsF.lottie"
+            style="width: 200px; height: 200px; border: none; background: transparent;"
+            allowfullscreen
+            loading="lazy">
+    </iframe>
+    <div th:if="${message != null}" th:text="${message}"
+         th:classappend="${messageType == 'error' ? 'error-message' : (messageType == 'success' ? 'success-message' : '')}"></div>
+
+    <form th:action="@{/login}" method="post">
+        <label for="name"><i class="fas fa-user-tag"></i> Username:</label>
+        <input type="text" id="name" name="username" required autocomplete="username">
+
+        <label for="pass"><i class="fas fa-lock"></i> Password:</label>
+        <input type="password" id="pass" name="password" required autocomplete="current-password">
+
+        <button type="submit"><i class="fas fa-sign-in-alt"></i> Login</button>
+        <button type="button" onclick="openForgotPasswordModal()" class="forgot-password-btn">Forgot Password?</button>
+        <!-- Forgot Password Modal -->
+
+    </form>
+</div>
+<!--<div id="forgot-password-modal-overlay" class="modal-overlay" onclick="closeForgotPasswordModal()"></div>-->
+<!--<div id="forgot-password-modal" class="modal">-->
+<!--    <div class="modal-header">Forgot Password</div>-->
+<!--    <form th:action="@{/forgot-password}" method="post">-->
+<!--        <label for="email"><i class="fas fa-envelope"></i> Enter your email:</label>-->
+<!--        <input type="email" id="mail" name="email" required>-->
+<!--        <button type="submit"><i class="fas fa-paper-plane"></i> Send Reset Email</button>-->
+<!--    </form>-->
+<!--</div>-->
+</body>
+</html>

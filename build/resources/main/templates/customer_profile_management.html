@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Customer Profile Management | ShopSmart</title>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- Lottie -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: [[${settings.fontFamily}]];
+            background: [[${settings.primaryColor}]];
+            color: #333;
+        }
+
+        .logo {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            height: 120px;
+            z-index: 1000;
+          }
+
+        .header {
+            background: linear-gradient(to right, #e0f7fa, #e8f5e9); /* Lighter blue-green for customer */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 60px 80px 40px;
+            clip-path: ellipse(100% 100% at 50% 0%);
+        }
+
+        .header-text h1 {
+            font-size: 42px;
+            color: [[${settings.secondaryColor}]]; /* Darker green for customer */
+            margin-bottom: 10px;
+        }
+
+        .header-text p {
+            font-size: 17px;
+            color: #555;
+        }
+
+        .lottie-wrapper {
+            width: 320px;
+            height: 240px;
+        }
+
+        .content-container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        .content-container h2 {
+            font-size: 28px;
+            color: [[${settings.secondaryColor}]]; /* Darker green for customer */
+            margin-bottom: 24px;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: white;
+            color: #007bff;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .logout-btn:hover {
+            background: #007bff;
+            color: white;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            right: 150px; /* Adjusted position */
+            background: white;
+            color: #007bff;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-btn:hover {
+            background: #007bff;
+            color: white;
+        }
+
+        #impersonation-banner {
+            background-color: #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            color: #212529;
+            text-align: center;
+        }
+
+        #impersonation-banner p {
+            margin: 0;
+            font-weight: bold;
+        }
+
+        #impersonation-banner button {
+            background-color: #e0a800;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #impersonation-banner button:hover {
+            background-color: #c69500;
+        }
+
+        /* Profile Management Specific Styles */
+        .profile-form {
+            background: #f9f9fb;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-top: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="password"] {
+            width: calc(100% - 20px); /* Account for padding */
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            box-sizing: border-box; /* Include padding in width */
+        }
+
+        .btn-custom {
+            background-color: [[${settings.secondaryColor}]];
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .btn-custom:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            color: #212529;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 20px;
+        }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .lottie-wrapper {
+                margin-top: 20px;
+            }
+            .back-btn, .logout-btn {
+                position: static;
+                margin-top: 10px;
+                display: block;
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .content-container {
+                padding: 20px;
+            }
+            .form-group input {
+                width: 100%;
+            }
+        }
+    </style>
+
+    <script>
+        function toggleResetPasswordForm() {
+            const form = document.getElementById('reset-password-form');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+</head>
+<body>
+
+<!-- Logo -->
+<img th:src="@{${settings.logoUrl}}" alt="ShopSmart Logo" class="logo" />
+
+<!-- Navigation Buttons -->
+<button type="button" onclick="history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Go Back</button>
+<button onclick="location.href='/logout'" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+
+<!-- Hero Header -->
+<section class="header">
+    <div class="header-text">
+        <h1>Profile Management</h1>
+        <p>Update your personal information and manage your account settings.</p>
+    </div>
+    <div class="lottie-wrapper">
+        <iframe
+                src="https://lottie.host/embed/b0ed7eac-e282-429f-870f-65eaaf06657c/e6salreU4y.lottie"
+                style="width: 300px; height: 300px; border: none; background: transparent;"
+                allowfullscreen
+                loading="lazy">
+        </iframe>
+    </div>
+</section>
+
+<!-- Main Content Section -->
+<div class="content-container">
+    <div th:if="${session.impersonationMode}" id="impersonation-banner">
+        <p>You are impersonating <span th:text="${session.impersonatedCustomerUsername}"></span>.</p>
+        <form th:action="@{/admin/customer/exit-impersonation}" method="post">
+            <button type="submit">Exit Impersonation</button>
+        </form>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success" role="alert">
+        <span th:text="${successMessage}"></span>
+    </div>
+    <div th:if="${successMessageReset}" class="alert alert-success" role="alert">
+    <span th:text="${successMessageReset}"></span>
+</div>
+
+    <form th:action="@{/profile/update}" method="post" class="profile-form">
+        <h2>Update Profile</h2>
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" class="form-control" th:value="${customer.username}" required>
+        </div>
+        <div class="form-group">
+            <label for="firstname">Firstname</label>
+            <input type="text" id="firstname" name="firstname" class="form-control" th:value="${customer.firstname}" required>
+        </div>
+        <div class="form-group">
+            <label for="lastname">Lastname</label>
+            <input type="text" id="lastname" name="lastname" class="form-control" th:value="${customer.lastname}" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" class="form-control" th:value="${customer.email}" required>
+        </div>
+        <button type="submit" class="btn-custom"><i class="fas fa-save"></i> Save Changes</button>
+    </form>
+
+    <div class="form-group">
+        <button type="button" class="btn-warning" onclick="toggleResetPasswordForm()"><i class="fas fa-key"></i> Reset Password</button>
+    </div>
+
+    <div id="reset-password-form" style="display: none; margin-top: 20px;" class="profile-form">
+        <h2>Reset Your Password</h2>
+        <div th:if="${successMessageReset}" class="alert alert-success" role="alert">
+            <span th:text="${successMessageReset}"></span>
+        </div>
+        <form th:action="@{/profile/reset-password}" method="post">
+            <div class="form-group">
+                <label for="currentPassword">Current Password</label>
+                <input type="password" id="currentPassword" name="currentPassword" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="newPassword">New Password</label>
+                <input type="password" id="newPassword" name="newPassword" class="form-control" required>
+            </div>
+            <button type="submit" class="btn-custom"><i class="fas fa-redo"></i> Reset Password</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

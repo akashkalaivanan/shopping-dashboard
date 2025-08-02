@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Product Details | ShopSmart</title>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- Lottie -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: [[${settings.fontFamily}]];
+            background: [[${settings.primaryColor}]];
+            color: #333;
+        }
+
+        .logo {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            height: 120px;
+            z-index: 1000;
+       }
+
+        .header {
+            background: linear-gradient(to right, #e0f7fa, #e8f5e9); /* Lighter blue-green for customer */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 60px 80px 40px;
+            clip-path: ellipse(100% 100% at 50% 0%);
+        }
+
+        .header-text h1 {
+            font-size: 42px;
+            color: [[${settings.secondaryColor}]]; /* Darker green for customer */
+            margin-bottom: 10px;
+        }
+
+        .header-text p {
+            font-size: 17px;
+            color: #555;
+        }
+
+        .lottie-wrapper {
+            width: 320px;
+            height: 240px;
+        }
+
+        .content-container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            text-align: center; /* Center content within the container */
+        }
+
+        .content-container h2 {
+            font-size: 28px;
+            color: [[${settings.secondaryColor}]]; /* Darker green for customer */
+            margin-bottom: 24px;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: white;
+            color: #007bff;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .logout-btn:hover {
+            background: #007bff;
+            color: white;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            right: 150px; /* Adjusted position */
+            background: white;
+            color: #007bff;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-btn:hover {
+            background: #007bff;
+            color: white;
+        }
+
+        #impersonation-banner {
+            background-color: #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            color: #212529;
+            text-align: center;
+        }
+
+        #impersonation-banner p {
+            margin: 0;
+            font-weight: bold;
+        }
+
+        #impersonation-banner button {
+            background-color: #e0a800;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #impersonation-banner button:hover {
+            background-color: #c69500;
+        }
+
+        /* Product Details Specific Styles */
+        .product-details {
+            text-align: left; /* Align text to left within this section */
+            margin: 0 auto;
+            max-width: 600px; /* Limit width for better readability */
+        }
+
+        .product-details p {
+            margin: 15px 0;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .product-details strong {
+            color: [[${settings.secondaryColor}]];
+            font-weight: 500;
+        }
+
+        .product-details img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .stock {
+            color: #28a745; /* Green for in stock */
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .out-of-stock {
+            color: #dc3545; /* Red for out of stock */
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        /* Add to Cart Form */
+        .add-to-cart-form {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9f9fb;
+            border-radius: 12px;
+            display: inline-block; /* To center the form */
+        }
+
+        .add-to-cart-form label {
+            font-weight: 500;
+            color: #555;
+            margin-right: 10px;
+        }
+
+        .add-to-cart-form input[type="number"] {
+            width: 80px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 1em;
+        }
+
+        .add-to-cart-form button {
+            background-color: [[${settings.secondaryColor}]]; /* Green add to cart button */
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-left: 10px;
+        }
+
+        .add-to-cart-form button:hover {
+            background-color: [[${settings.secondaryColor}]];
+            transform: translateY(-2px);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .lottie-wrapper {
+                margin-top: 20px;
+            }
+            .back-btn, .logout-btn {
+                position: static;
+                margin-top: 10px;
+                display: block;
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .content-container {
+                padding: 20px;
+            }
+            .product-details {
+                text-align: center;
+            }
+            .add-to-cart-form {
+                display: block;
+                text-align: center;
+            }
+            .add-to-cart-form input, .add-to-cart-form button {
+                margin-top: 10px;
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Logo -->
+<img th:src="@{${settings.logoUrl}}" alt="ShopSmart Logo" class="logo" />
+
+<!-- Navigation Buttons -->
+<button type="button" onclick="history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Go Back</button>
+<button onclick="location.href='/logout'" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+
+<!-- Hero Header -->
+<section class="header">
+    <div class="header-text">
+        <h1>Product Details</h1>
+        <p>Explore the features and specifications of your chosen product.</p>
+    </div>
+    <div class="lottie-wrapper">
+        <iframe
+                src="https://lottie.host/embed/9483b9c1-e43e-4b48-9754-fe9699e0bb68/jnw42Gr6W0.lottie"
+                style="width: 300px; height: 300px; border: none; background: transparent;"
+                allowfullscreen
+                loading="lazy">
+        </iframe>
+    </div>
+</section>
+
+<!-- Main Content Section -->
+<div class="content-container">
+    <div th:if="${session.impersonationMode}" id="impersonation-banner">
+        <p>You are impersonating <span th:text="${session.impersonatedCustomerUsername}"></span>.</p>
+        <form th:action="@{/admin/customer/exit-impersonation}" method="post">
+            <button type="submit">Exit Impersonation</button>
+        </form>
+    </div>
+
+    <div class="product-details">
+        <p><strong>Name:</strong> <span th:text="${product.name}"></span></p>
+        <p><strong>Description:</strong> <span th:text="${product.description}"></span></p>
+        <p><strong>Price:</strong> <span th:text="'$' + ${product.price}"></span></p>
+        <p><strong>Image:</strong></p>
+        <img th:src="${product.imageUrl}" alt="Product Image">
+        <p th:if="${product.stockQuantity > 0}" class="stock">In Stock: <span th:text="${product.stockQuantity}"></span></p>
+        <p th:if="${product.stockQuantity == 0}" class="out-of-stock">Out of Stock</p>
+
+        <!-- Add to Cart Form -->
+        <form th:if="${product.stockQuantity > 0}" action="/customer/cart/add/{id}" th:action="@{/customer/cart/add/{id}(id=${product.id})}" method="get" class="add-to-cart-form">
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" min="1" th:max="${product.stockQuantity}" required>
+            <button type="submit"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

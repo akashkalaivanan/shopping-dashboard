@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Product Management | ShopSmart</title>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- Lottie -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background: #f4f7fb;
+            color: #333;
+        }
+
+         .logo {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            height: 120px;
+            z-index: 1000;
+       }
+
+        .header {
+            background: linear-gradient(to right, #e1f5fe, #fce4ec); /* Admin portal background */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 60px 80px 40px;
+            clip-path: ellipse(100% 100% at 50% 0%);
+        }
+
+        .header-text h1 {
+            font-size: 42px;
+            color: #0d47a1; /* Admin portal color */
+            margin-bottom: 10px;
+        }
+
+        .header-text p {
+            font-size: 17px;
+            color: #555;
+        }
+
+        .lottie-wrapper {
+            width: 320px;
+            height: 240px;
+        }
+
+        .content-container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        .content-container h2 {
+            font-size: 28px;
+            color: #0d47a1; /* Admin portal color */
+            margin-bottom: 24px;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: white;
+            color: #007bff;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .logout-btn:hover {
+            background: #007bff;
+            color: white;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            right: 150px; /* Adjusted position */
+            background: white;
+            color: #007bff;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-btn:hover {
+            background: #007bff;
+            color: white;
+        }
+
+        /* Actions (Filter and Create) */
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            background: #f9f9fb;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .actions label {
+            font-weight: 500;
+            color: #555;
+            margin-right: 10px;
+        }
+
+        .actions input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            flex-grow: 1;
+            max-width: 250px;
+        }
+
+        .actions button.create-btn {
+            background-color: #28a745; /* Green for create */
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .actions button.create-btn:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        /* Pagination */
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .pagination-link {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .pagination-link:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .pagination span {
+            font-size: 1.1em;
+            color: #555;
+            font-weight: 500;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        table, th, td {
+            border: 1px solid #eee;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+            font-weight: 500;
+        }
+
+        th button {
+            background: none;
+            border: none;
+            color: #007bff;
+            font-size: 1em;
+            cursor: pointer;
+            margin-left: 5px;
+            padding: 0;
+            transition: color 0.3s ease;
+        }
+
+        th button:hover {
+            color: #0056b3;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        td input[type="text"],
+        td input[type="number"],
+        td input[type="file"] {
+            width: calc(100% - 10px); /* Adjust for padding */
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        td input[type="file"] {
+            margin-top: 5px;
+        }
+
+        td span[data-name] {
+            display: block;
+            padding: 8px 0;
+        }
+
+        td span[onclick] {
+            color: #007bff;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .action-buttons-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons-group button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .action-buttons-group button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .action-buttons-group .edit-btn { background-color: #ffc107; color: #212529; }
+        .action-buttons-group .edit-btn:hover { background-color: #e0a800; }
+        .action-buttons-group .delete-btn { background-color: #dc3545; }
+        .action-buttons-group .delete-btn:hover { background-color: #c82333; }
+        .action-buttons-group .save-btn { background-color: #28a745; }
+        .action-buttons-group .save-btn:hover { background-color: #218838; }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .lottie-wrapper {
+                margin-top: 20px;
+            }
+            .back-btn, .logout-btn {
+                position: static;
+                margin-top: 10px;
+                display: block;
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .content-container {
+                padding: 20px;
+            }
+            .actions {
+                flex-direction: column;
+                gap: 10px;
+                align-items: stretch;
+            }
+            .actions input, .actions button {
+                width: 100%;
+                max-width: 100%;
+            }
+            .pagination {
+                flex-direction: column;
+                gap: 10px;
+            }
+            table, th, td {
+                font-size: 14px;
+                padding: 8px;
+            }
+            td input {
+                width: 100%;
+            }
+            .action-buttons-group {
+                flex-direction: column;
+                gap: 5px;
+            }
+            .action-buttons-group button {
+                width: 100%;
+            }
+        }
+    </style>
+
+    <script>
+        let currentPage = 1; // Track the current page for pagination
+        // Track sort order for each column
+        const sortOrder = {
+            price: 'asc',
+            stockQuantity: 'asc'
+        };
+
+        function sortTable(column) {
+            const tableBody = document.getElementById('productTableBody');
+            const rows = Array.from(tableBody.querySelectorAll('tr'));
+
+            // Toggle sort order for the specific column
+            sortOrder[column] = sortOrder[column] === 'asc' ? 'desc' : 'asc';
+
+            rows.sort((a, b) => {
+                const aValue = parseFloat(a.querySelector(`[data-name="${column}"]`).textContent) || 0;
+                const bValue = parseFloat(b.querySelector(`[data-name="${column}"]`).textContent) || 0;
+
+                if (sortOrder[column] === 'asc') {
+                    return aValue - bValue; // Ascending order
+                } else {
+                    return bValue - aValue; // Descending order
+                }
+            });
+
+            rows.forEach(row => tableBody.appendChild(row)); // Reorder rows in the table
+
+            // Update sort order indicator (optional, if you have an element for it)
+            // document.getElementById(`${column}SortOrder`).textContent = sortOrder[column] === 'asc' ? '↑' : '↓';
+        }
+        function filterByName() {
+            const filterValue = document.getElementById('filterName').value.toLowerCase();
+            const rows = document.querySelectorAll('#productTableBody tr');
+
+            rows.forEach(row => {
+                const nameCell = row.querySelector('[data-name="name"]');
+                const nameText = nameCell.textContent.toLowerCase();
+
+                if (nameText.includes(filterValue)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function uploadImage(input) {
+            const file = input.files[0];
+            const row = input.closest('tr');
+            const productIdInput = row.querySelector('input[name="id"]');
+            const productId = productIdInput ? productIdInput.value : null; // Get product ID if it exists
+            const formData = new FormData();
+            formData.append("image", file);
+            if (productId) {
+                formData.append("productId", productId); // Include product ID if available
+            }
+
+            fetch('/admin/product/upload-image', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to upload image');
+                    }
+                    return response.text();
+                })
+                .then(imagePath => {
+                    const imageUrlInput = row.querySelector('input[name="imageUrl"]');
+                    const imageUrlSpan = row.querySelector('span[data-name="imageurl"]');
+
+                    if (imageUrlInput) {
+                        imageUrlInput.value = imagePath; // Save the relative path in the hidden input
+                    }
+                    if (imageUrlSpan) {
+                        imageUrlSpan.textContent = imagePath; // Update the displayed URL
+                        imageUrlSpan.onclick = () => window.open(imagePath, '_blank'); // Update click handler
+                    }
+                })
+                .catch(error => alert('Error uploading image: ' + error.message));
+        }
+    </script>
+</head>
+<body>
+
+<!-- Logo -->
+<img src="/logo/FullLogo_Transparent.png" alt="ShopSmart Logo" class="logo" />
+
+<!-- Navigation Buttons -->
+<button type="button" onclick="history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Go Back</button>
+<button onclick="location.href='/logout'" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+
+<!-- Hero Header -->
+<section class="header">
+    <div class="header-text">
+        <h1>Product Management</h1>
+        <p>Add, edit, and delete products in your store catalog.</p>
+    </div>
+    <div class="lottie-wrapper">
+        <iframe
+                src="https://lottie.host/embed/0d22942c-9a14-4e4c-8e55-5cb9a9d40cad/uf4c020h7J.lottie"
+                style="width: 320px; height: 320px; border: none; background: transparent;"
+                allowfullscreen
+                loading="lazy">
+        </iframe>
+    </div>
+</section>
+
+<!-- Main Content Section -->
+<div class="content-container">
+    <h2>Product Catalog</h2>
+
+    <div class="actions">
+        <label for="filterName"><i class="fas fa-filter"></i> Filter by Name:</label>
+        <input type="text" id="filterName" oninput="filterByName()" placeholder="Enter product name">
+        <button class="create-btn" onclick="createRow()"><i class="fas fa-plus-circle"></i> Create New Product</button>
+    </div>
+
+    <div class="pagination">
+        <a th:if="${currentPage > 1}"
+           th:href="@{/admin/product(page=${currentPage - 1}, size=${size}, name=${name})}"
+           class="pagination-link"><i class="fas fa-chevron-left"></i> Previous</a>
+        <span>Page <span th:text="${currentPage}"></span> of <span th:text="${totalPages}"></span></span>
+        <a th:if="${currentPage < totalPages}"
+           th:href="@{/admin/product(page=${currentPage + 1}, size=${size}, name=${name})}"
+           class="pagination-link">Next <i class="fas fa-chevron-right"></i></a>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price <button onclick="sortTable('price')"><i class="fas fa-sort"></i></button></th>
+            <th>Stock Quantity <button onclick="sortTable('stockQuantity')"><i class="fas fa-sort"></i></button></th>
+            <th>Product Image</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="productTableBody">
+        <tr th:each="product : ${products}">
+            <td>
+                <input type="hidden" name="id" th:value="${product.id}">
+                <span data-name="name" th:text="${product.name}"></span>
+            </td>
+            <td><span data-name="description" th:text="${product.description}"></span></td>
+            <td><span data-name="price" th:text="${product.price}"></span></td>
+            <td><span data-name="stockQuantity" th:text="${product.stockQuantity}"></span></td>
+            <td>
+                <span th:if="${product.imageUrl}" th:text="${product.imageUrl}" style="cursor: pointer;" onclick="window.open(this.textContent, '_blank')" data-name="imageurl"></span>
+                <input type="file" name="image" onchange="uploadImage(this)">
+                <input type="hidden" name="imageUrl" th:value="${product.imageUrl}">
+            </td>
+            <td>
+                <div class="action-buttons-group">
+                    <button class="edit-btn" onclick="editRow(this)"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="delete-btn" onclick="deleteRow(this)"><i class="fas fa-trash-alt"></i> Delete</button>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <script>
+        function loadPage(page) {
+            console.log(`Fetching products for page ${page}`);
+            fetch(`/admin/product?page=${page}&size=20`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch products');
+                    }
+                    return response.text(); // Fetch HTML content
+
+                })
+                .then(html => {
+                    document.body.innerHTML = html; // Replace the current page content with the new HTML
+                    currentPage=page;
+                })
+                .catch(error => console.error('Error loading products:', error));
+        }
+        function createRow() {
+            const table = document.getElementById('productTableBody');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+            <td><input type="text" name="name" placeholder="Name"></td>
+            <td><input type="text" name="description" placeholder="Description"></td>
+            <td><input type="number" name="price" placeholder="Price" min="0.01" step="0.01"></td>
+            <td><input type="number" name="stockQuantity" placeholder="Stock Quantity" min="0"></td>
+            <td>
+                <input type="file" name="image">
+                <input type="hidden" name="imageUrl">
+            </td>
+            <td>
+                <div class="action-buttons-group">
+                    <button class="save-btn" onclick="createProduct(this)"><i class="fas fa-save"></i> Save</button>
+                    <button class="delete-btn" onclick="this.closest('tr').remove()"><i class="fas fa-times"></i> Cancel</button>
+                </div>
+            </td>
+        `;
+            table.appendChild(newRow);
+        }
+
+        function createProduct(button) {
+            const row = button.closest('tr');
+            const inputs = row.querySelectorAll('input');
+            const formData = new FormData(); // Use FormData for file uploads
+
+            inputs.forEach(input => {
+                if (input.type === 'file') {
+                    const file = input.files[0];
+                    if (file) {
+                        formData.append(input.name, file);
+                    }
+                } else {
+                    formData.append(input.name, input.value);
+                }
+            });
+
+            fetch('/admin/product/create', {
+                method: 'POST',
+                body: formData // Send FormData directly
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => { throw new Error(text); });
+                    }
+                    return response.json();
+                })
+                .then(product => {
+                    row.innerHTML = `
+                <td>
+                    <input type="hidden" name="id" value="${product.id}">
+                    <span data-name="name">${product.name}</span>
+                </td>
+                <td><span data-name="description">${product.description}</span></td>
+                <td><span data-name="price">${product.price}</span></td>
+                <td><span data-name="stockQuantity">${product.stockQuantity}</span></td>
+                <td>
+                    <span style="cursor: pointer;" onclick="window.open('${product.imageUrl}', '_blank')" data-name="imageurl">${product.imageUrl || ''}</span>
+                    <input type="file" name="image" >
+                    <input type="hidden" name="imageUrl" value="${product.imageUrl || ''}">
+                </td>
+                <td>
+                    <div class="action-buttons-group">
+                        <button class="edit-btn" onclick="editRow(this)"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="delete-btn" onclick="deleteRow(this)"><i class="fas fa-trash-alt"></i> Delete</button>
+                    </div>
+                </td>
+            `;
+                    alert('Product created successfully!');
+                })
+                .catch(error => alert('Error saving product: ' + error.message));
+        }
+
+        function updateProduct(button) {
+            const row = button.closest('tr');
+            const inputs = row.querySelectorAll('input');
+            const formData = new FormData(); // Use FormData for file uploads
+
+            inputs.forEach(input => {
+                if (input.type === 'file') {
+                    const file = input.files[0];
+                    if (file) {
+                        formData.append(input.name, file);
+                    }
+                } else {
+                    formData.append(input.name, input.value);
+                }
+            });
+
+            const id = row.querySelector('input[name="id"]').value;
+
+            fetch(`/admin/product/update/${id}`, {
+                method: 'POST',
+                body: formData // Send FormData directly
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => { throw new Error(text); });
+                    }
+                    return response.json();
+                })
+                .then(product => {
+                    row.innerHTML = `
+                <td>
+                    <input type="hidden" name="id" value="${product.id}">
+                    <span data-name="name">${product.name}</span>
+                </td>
+                <td><span data-name="description">${product.description}</span></td>
+                <td><span data-name="price">${product.price}</span></td>
+                <td><span data-name="stockQuantity">${product.stockQuantity}</span></td>
+                <td>
+                    <span style="cursor: pointer;" onclick="window.open('${product.imageUrl}', '_blank')" data-name="imageurl">${product.imageUrl || ''}</span>
+                    <input type="file" name="image" onchange="uploadImage(this)">
+                    <input type="hidden" name="imageUrl" value="${product.imageUrl || ''}">
+                </td>
+                <td>
+                    <div class="action-buttons-group">
+                        <button class="edit-btn" onclick="editRow(this)"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="delete-btn" onclick="deleteRow(this)"><i class="fas fa-trash-alt"></i> Delete</button>
+                    </div>
+                </td>
+            `;
+                    alert('Product updated successfully!');
+                })
+                .catch(error => alert('Error updating product: ' + error.message));
+        }
+
+        function editRow(button) {
+            const row = button.closest('tr');
+            row.querySelectorAll('span[data-name]').forEach(span => {
+                const input = document.createElement('input');
+                input.type = (span.dataset.name === 'price' || span.dataset.name === 'stockQuantity') ? 'number' : 'text';
+                input.name = span.dataset.name;
+                input.value = span.textContent;
+                if (span.dataset.name === 'price') {
+                    input.setAttribute('min', '0.01');
+                    input.setAttribute('step', '0.01');
+                } else if (span.dataset.name === 'stockQuantity') {
+                    input.setAttribute('min', '0');
+                }
+                span.replaceWith(input);
+            });
+
+            // Change the button to Save
+            button.textContent = 'Save';
+            button.className = 'save-btn';
+            button.onclick = () => updateProduct(button);
+
+            // Add a Cancel button if not already present
+            let cancelButton = row.querySelector('.cancel-btn');
+            if (!cancelButton) {
+                cancelButton = document.createElement('button');
+                cancelButton.textContent = 'Cancel';
+                cancelButton.className = 'delete-btn cancel-btn'; // Use delete-btn style for cancel
+                cancelButton.innerHTML = '<i class="fas fa-times"></i> Cancel';
+                cancelButton.onclick = () => location.reload(); // Reload to revert changes
+                button.parentNode.insertBefore(cancelButton, button.nextSibling);
+            }
+        }
+
+        function deleteRow(button) {
+            const row = button.closest('tr');
+            const id = row.querySelector('input[name="id"]')?.value;
+
+            if (!id) {
+                row.remove(); // not saved in DB, just remove from UI
+                return;
+            }
+
+            const confirmation = confirm('Are you sure you want to delete this product? This action cannot be undone.');
+            if (!confirmation) {
+                return; // Cancel deletion if user clicks "Cancel"
+            }
+
+            fetch(`/admin/product/check-order-products/${id}`, {
+                method: 'POST' // Using POST as per original code, though GET might be more semantic for a check
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to check product association.');
+                    }
+                    return response.json();
+                })
+                .then(isInOrderProducts => {
+                    if (isInOrderProducts) {
+                        alert('This product is associated with existing orders and cannot be deleted.');
+                    } else {
+                        fetch(`/admin/product/delete/${id}`, {
+                            method: 'DELETE'
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Failed to delete product.');
+                                }
+                                row.remove();
+                                alert('Product deleted successfully!');
+                            })
+                            .catch(error => alert('Error deleting product: ' + error.message));
+                    }
+                })
+                .catch(error => alert('Error checking product association: ' + error.message));
+        }
+    </script>
+</div>
+</body>
+</html>

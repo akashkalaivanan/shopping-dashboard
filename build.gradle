@@ -1,0 +1,48 @@
+buildscript {
+    configurations.all {
+        resolutionStrategy {
+            force 'org.codehaus.jettison:jettison:1.5.2'
+            force 'org.yaml:snakeyaml:2.0'
+        }
+    }
+}
+plugins {
+    id 'org.springframework.boot' version '2.7.5'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation ('org.springframework.boot:spring-boot-starter-web') {
+        exclude group: 'org.yaml', module: 'snakeyaml'
+    }
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    compileOnly('org.projectlombok:lombok')
+    annotationProcessor('org.projectlombok:lombok')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    //database
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
+    implementation group: 'mysql', name: 'mysql-connector-java'
+    //jwt
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+    //frontend
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    //validation of db data
+    implementation 'org.hibernate.validator:hibernate-validator:6.2.5.Final'
+    implementation 'javax.validation:validation-api:2.0.1.Final'
+    //logging
+    implementation 'org.apache.logging.log4j:log4j-core:2.12.2'
+    implementation 'org.apache.logging.log4j:log4j-api:2.12.2'
+    //mail
+//    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+}
+
+test {
+    useJUnitPlatform()
+}

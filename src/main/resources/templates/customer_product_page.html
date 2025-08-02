@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Customer Product Page | ShopSmart</title>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- Lottie -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: '[[${settings.fontFamily}]];
+            background: [[${settings.primaryColor}]];
+            color: #333;
+        }
+
+       .logo {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            height: 120px;
+            z-index: 1000;
+        }
+
+        .header {
+            background: linear-gradient(to right, #e0f7fa, #e8f5e9); /* Lighter blue-green for customer */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 60px 80px 40px;
+            clip-path: ellipse(100% 100% at 50% 0%);
+        }
+
+        .header-text h1 {
+            font-size: 42px;
+            color: [[${settings.secondaryColor}]]; /* Darker green for customer */
+            margin-bottom: 10px;
+        }
+
+        .header-text p {
+            font-size: 17px;
+            color: #555;
+        }
+
+        .lottie-wrapper {
+            width: 320px;
+            height: 240px;
+        }
+
+        .content-container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        .content-container h2 {
+            font-size: 28px;
+            color: [[${settings.secondaryColor}]]; /* Darker green for customer */
+            margin-bottom: 24px;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: white;
+            color: #007bff;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 1000; /* Ensure logout button is above other elements */
+        }
+
+        .logout-btn:hover {
+            background: #007bff;
+            color: white;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            right: 150px; /* Adjusted position */
+            background: white;
+            color: #007bff;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 1000; /* Ensure back button is above other elements */
+        }
+
+        .back-btn:hover {
+            background: #007bff;
+            color: white;
+        }
+
+        #impersonation-banner {
+            background-color: #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            color: #212529;
+            text-align: center;
+        }
+
+        #impersonation-banner p {
+            margin: 0;
+            font-weight: bold;
+        }
+
+        #impersonation-banner button {
+            background-color: #e0a800;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #impersonation-banner button:hover {
+            background-color: #c69500;
+        }
+
+        /* Search and Sort */
+        .search-sort {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: #f9f9fb;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .search-sort form {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            justify-content: flex-end; /* Align items to the right */
+        }
+
+        .search-sort input[type="text"],
+        .search-sort select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            flex-grow: 1; /* Allow inputs to grow */
+            max-width: 250px; /* Limit max width */
+        }
+
+        .search-sort button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .search-sort button:hover {
+            background-color: [[${settings.secondaryColor}]];
+            transform: translateY(-2px);
+        }
+
+        /* Product Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .product-card {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card h3 {
+            margin: 15px 0 10px;
+            font-size: 20px;
+            color: [[${settings.secondaryColor}]];
+        }
+
+        .product-card h3 a {
+            text-decoration: none;
+            color: [[${settings.secondaryColor}]];
+            transition: color 0.3s ease;
+        }
+
+        .product-card h3 a:hover {
+            color: #004d40;
+        }
+
+        .product-card .price {
+            font-weight: bold;
+            color: #007bff;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .product-card .stock {
+            color: #28a745; /* Green for in stock */
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        .product-card .out-of-stock {
+            color: #dc3545; /* Red for out of stock */
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        .product-card button {
+            background-color: [[${settings.secondaryColor}]]; /* Green add to cart button */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .product-card button:hover {
+            background-color:[[${settings.secondaryColor}]];
+            transform: translateY(-2px);
+        }
+
+        /* Pagination */
+        .pagination {
+            margin-top: 40px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .pagination-link {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .pagination-link:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .pagination span {
+            font-size: 1.1em;
+            color: #555;
+            font-weight: 500;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .lottie-wrapper {
+                margin-top: 20px;
+            }
+            .back-btn, .logout-btn {
+                position: static;
+                margin-top: 10px;
+                display: block;
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .content-container {
+                padding: 20px;
+            }
+            .search-sort form {
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
+            .search-sort input, .search-sort select, .search-sort button {
+                width: 100%;
+                max-width: 100%;
+            }
+            .product-grid {
+                grid-template-columns: 1fr; /* Stack cards on small screens */
+            }
+            .pagination {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Logo -->
+<img th:src="@{${settings.logoUrl}}" alt="ShopSmart Logo" class="logo" />
+
+<!-- Navigation Buttons -->
+<button type="button" onclick="history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Go Back</button>
+<button onclick="location.href='/logout'" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+
+<!-- Hero Header -->
+<section class="header">
+    <div class="header-text">
+        <h1>Product Catalog</h1>
+        <p>Browse our wide range of products and find what you need.</p>
+    </div>
+    <div class="lottie-wrapper">
+        <iframe
+                src="https://lottie.host/embed/9eb54ca8-f2de-40e9-9610-7f3200b8ac85/fxTaknqlaS.lottie"
+                style="width: 300px; height: 300px; border: none; background: transparent;"
+                allowfullscreen
+                loading="lazy">
+        </iframe>
+    </div>
+</section>
+
+<!-- Main Content Section -->
+<div class="content-container">
+    <div th:if="${session.impersonationMode}" id="impersonation-banner">
+        <p>You are impersonating <span th:text="${session.impersonatedCustomerUsername}"></span>.</p>
+        <form th:action="@{/admin/customer/exit-impersonation}" method="post">
+            <button type="submit">Exit Impersonation</button>
+        </form>
+    </div>
+
+    <!-- Search and Sort -->
+    <div class="search-sort">
+        <form th:action="@{/customer/product}" method="get">
+            <input type="text" name="name" placeholder="Search by name" th:value="${name}">
+            <input type="hidden" name="page" th:value="${currentPage}">
+            <select name="sort">
+                <option value="asc" th:selected="${sort == 'asc'}">Price: Low to High</option>
+                <option value="desc" th:selected="${sort == 'desc'}">Price: High to Low</option>
+            </select>
+            <button type="submit"><i class="fas fa-filter"></i> Apply Filters</button>
+        </form>
+    </div>
+
+    <!-- Product Catalog -->
+    <div class="product-grid">
+        <div class="product-card" th:each="product : ${products}">
+            <h3>
+                <a th:href="@{/customer/product/details/{id}(id=${product.id})}" th:text="${product.name}"></a>
+            </h3>
+            <p class="price" th:text="'$' + ${product.price}"></p>
+            <p th:if="${product.stockQuantity > 0}" class="stock">In Stock</p>
+            <p th:if="${product.stockQuantity == 0}" class="out-of-stock">Out of Stock</p>
+            <a th:if="${product.stockQuantity > 0}" th:href="@{/customer/cart/add/{id}(id=${product.id})}">
+                <button><i class="fas fa-cart-plus"></i> Add to Cart</button>
+            </a>
+        </div>
+    </div>
+
+    <div class="pagination">
+        <a th:if="${currentPage > 1}"
+           th:href="@{/customer/product(page=${currentPage - 1}, size=9, name=${name}, sort=${sort})}"
+           class="pagination-link"><i class="fas fa-chevron-left"></i> Previous</a>
+        <span>Page <span th:text="${currentPage}"></span> of <span th:text="${totalPages}"></span></span>
+        <a th:if="${currentPage < totalPages}"
+           th:href="@{/customer/product(page=${currentPage + 1}, size=10, name=${name}, sort=${sort})}"
+           class="pagination-link">Next <i class="fas fa-chevron-right"></i></a>
+    </div>
+</div>
+
+</body>
+</html>

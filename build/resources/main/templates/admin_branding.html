@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Admin Branding Settings | ShopSmart</title>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background: #f4f7fb;
+            color: #333;
+        }
+
+        .logo {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            height: 120px;
+            z-index: 1000;
+        }
+
+        .header {
+            background: linear-gradient(to right, #e1f5fe, #fce4ec);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 60px 80px 40px;
+            clip-path: ellipse(100% 100% at 50% 0%);
+        }
+
+        .header-text h1 {
+            font-size: 42px;
+            color: #0d47a1;
+            margin-bottom: 10px;
+        }
+
+        .header-text p {
+            font-size: 17px;
+            color: #555;
+        }
+
+        .lottie-wrapper {
+            width: 320px;
+            height: 240px;
+        }
+
+        .logout-btn, .back-btn {
+            position: absolute;
+            top: 20px;
+            background: white;
+            color: #007bff;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .logout-btn { right: 30px; }
+        .back-btn { right: 150px; }
+
+        .logout-btn:hover, .back-btn:hover {
+            background: #007bff;
+            color: white;
+        }
+
+        .content-container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        .content-container h2 {
+            font-size: 28px;
+            color: #0d47a1;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input[type="color"],
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        input[type="color"] {
+            width: 50px;
+            height: 50px;
+            padding: 0;
+        }
+
+        input[type="color"]:hover {
+            transform: scale(1.1);
+        }
+
+        .color-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .color-preview {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: #fff;
+        }
+
+        img#logoPreview {
+            max-height: 100px;
+            margin-top: 10px;
+        }
+
+        button[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+    </style>
+
+    <script>
+        function previewLogo(event) {
+            const logoPreview = document.getElementById('logoPreview');
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    logoPreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateHexInput(colorPickerId, hexInputId, previewId) {
+            const colorPicker = document.getElementById(colorPickerId);
+            const hexInput = document.getElementById(hexInputId);
+            hexInput.value = colorPicker.value;
+            document.getElementById(previewId).style.backgroundColor = colorPicker.value;
+        }
+
+        function updateColorPicker(hexInputId, colorPickerId, previewId) {
+            const hexInput = document.getElementById(hexInputId);
+            const colorPicker = document.getElementById(colorPickerId);
+            colorPicker.value = hexInput.value;
+            document.getElementById(previewId).style.backgroundColor = hexInput.value;
+        }
+
+        function previewFontFamily() {
+            const fontFamily = document.getElementById('fontFamily').value;
+            document.getElementById('previewContainer').style.fontFamily = fontFamily;
+        }
+    </script>
+</head>
+<body>
+
+<!-- Logo -->
+<img src="/logo/FullLogo_Transparent.png" alt="ShopSmart Logo" class="logo" />
+
+<!-- Navigation Buttons -->
+<button type="button" onclick="history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Go Back</button>
+<button onclick="location.href='/logout'" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+
+<!-- Hero Section -->
+<section class="header">
+    <div class="header-text">
+        <h1>Branding Settings</h1>
+        <p>Customize the look and feel of your customer portal.</p>
+    </div>
+    <div class="lottie-wrapper">
+        <iframe
+                src="https://lottie.host/embed/363995f2-745c-48e7-9841-274d996d2d73/IJgWRmqmIX.lottie"
+                style="width: 260px; height: 260px; border: none; background: transparent;"
+                allowfullscreen
+                loading="lazy">
+        </iframe>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="content-container">
+    <h2>Customize Branding</h2>
+    <form action="/admin/branding/save" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="logo">Upload Header Logo</label>
+            <input type="file" id="logo" name="logo" accept="image/*" onchange="previewLogo(event)">
+            <img id="logoPreview" th:src="@{${settings.logoUrl}}" alt="Logo Preview" />
+        </div>
+
+        <div class="form-group">
+            <label>Primary Color</label>
+            <div class="color-input">
+                <input type="color" id="primaryColor" name="primaryColor" th:value="${settings.primaryColor}" onchange="updateHexInput('primaryColor', 'primaryHex', 'primaryPreview')">
+                <input type="text" id="primaryHex" name="primaryHex" th:value="${settings.primaryColor}" onchange="updateColorPicker('primaryHex', 'primaryColor', 'primaryPreview')">
+                <div class="color-preview" id="primaryPreview" th:style="'background-color:' + ${settings.primaryColor}"></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Secondary Color</label>
+            <div class="color-input">
+                <input type="color" id="secondaryColor" name="secondaryColor" th:value="${settings.secondaryColor}" onchange="updateHexInput('secondaryColor', 'secondaryHex', 'secondaryPreview')">
+                <input type="text" id="secondaryHex" name="secondaryHex" th:value="${settings.secondaryColor}" onchange="updateColorPicker('secondaryHex', 'secondaryColor', 'secondaryPreview')">
+                <div class="color-preview" id="secondaryPreview" th:style="'background-color:' + ${settings.secondaryColor}"></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Font Family</label>
+            <select id="fontFamily" name="fontFamily" th:value="${settings.fontFamily}" onchange="previewFontFamily()">
+                <option value="'Roboto', sans-serif" th:selected="${settings.fontFamily == 'Roboto, sans-serif'}">Roboto</option>
+                <option value="Arial, sans-serif" th:selected="${settings.fontFamily == 'Arial, sans-serif'}">Arial</option>
+                <option value="'Times New Roman', serif" th:selected="${settings.fontFamily == 'Times New Roman, serif'}">Times New Roman</option>
+                <option value="'Courier New', monospace" th:selected="${settings.fontFamily == 'Courier New, monospace'}">Courier New</option>
+            </select>
+            <div id="previewContainer" style="margin-top: 10px;">
+                <p>Preview Text with selected font</p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="customHtml">Custom HTML/Text Block</label>
+            <textarea id="customHtml" name="customHtml" rows="8" th:text="${settings.customHtml}"></textarea>
+        </div>
+
+        <button type="submit">Save Settings</button>
+    </form>
+</div>
+
+</body>
+</html>
